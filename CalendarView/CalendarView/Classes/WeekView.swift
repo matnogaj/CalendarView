@@ -8,65 +8,64 @@
 //
 
 import UIKit
-import SwiftMoment
 
 class WeekView: UIView {
 
-  var date: Moment! {
-    didSet {
-      setDays()
+    var date: Moment = moment() {
+        didSet {
+            setDays()
+        }
     }
-  }
-  var days: [DayView] = []
-  var month: Moment!
+    var days: [DayView] = []
+    var month: Moment!
 
-  required init?(coder aDecoder: NSCoder) {
-    super.init(coder: aDecoder)
-    setup()
-  }
-
-  override init(frame: CGRect) {
-    super.init(frame: frame)
-    setup()
-  }
-
-  func setup() {
-    days = []
-    for _ in 1...7 {
-      let day = DayView()
-      addSubview(day)
-      days.append(day)
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+        setup()
     }
-  }
 
-  func setdown() {
-    for day in days {
-        NotificationCenter.default.removeObserver(day)
-      day.removeFromSuperview()
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        setup()
     }
-  }
 
-  override func layoutSubviews() {
-    super.layoutSubviews()
-    var x: CGFloat = 0
-    for i in 1...days.count {
-      let day = days[i - 1]
-        day.frame = CGRect(x: x, y: 0, width: bounds.size.width / days.count, height: bounds.size.height)
-      x = day.frame.maxX
+    func setup() {
+        days = []
+        for _ in 1...7 {
+            let day = DayView()
+            addSubview(day)
+            days.append(day)
+        }
     }
-  }
 
-  func setDays() {
-    if days.count > 0 {
-      for i in 0..<days.count {
-        let day = days[i]
-        let dayDate = date.add(i, .Days)
-        day.isToday = dayDate.isToday()
-        day.isOtherMonth = !month.isSameMonth(other: dayDate)
-        day.selected = false
-        day.date = dayDate
-      }
+    func setdown() {
+        for day in days {
+            NotificationCenter.default.removeObserver(day)
+            day.removeFromSuperview()
+        }
     }
-  }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        var x: CGFloat = 0
+        for i in 1...days.count {
+            let day = days[i - 1]
+            day.frame = CGRect(x: x, y: 0, width: bounds.size.width / days.count, height: bounds.size.height)
+            x = day.frame.maxX
+        }
+    }
+
+    func setDays() {
+        if days.count > 0 {
+            for i in 0..<days.count {
+                let day = days[i]
+                let dayDate = date.add(i, .days)
+                day.isToday = dayDate.isToday()
+                day.isOtherMonth = !month.isSameMonth(other: dayDate)
+                day.selected = false
+                day.date = dayDate
+            }
+        }
+    }
 
 }

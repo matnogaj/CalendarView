@@ -8,7 +8,6 @@
 
 import XCTest
 @testable import CalendarView
-import SwiftMoment
 
 class CalendarViewTests: XCTestCase {
     
@@ -23,21 +22,21 @@ class CalendarViewTests: XCTestCase {
     }
     
     func testNovember2015Bug() {
-        let october = moment("10-12-2015")!
-        XCTAssertEqual("October 12, 2015", october.format("MMMM d, yyyy"))
-        let november = october.add(1, .Months)
-        let date = november.startOf(.Months)
+        let october = moment(stringDate: "10-12-2015")!
+        XCTAssertEqual("October 12, 2015", october.format(dateFormat: "MMMM d, yyyy"))
+        let november = october.add(1, .months)
+        let date = november.startOf(.months)
         XCTAssertEqual(1, date.day)
-        let date2 = date.endOf(.Days).add(1, .Days)
+        let date2 = date.endOf(.days).add(1, .days)
         XCTAssertEqual(2, date2.day)
     }
 
     // See: https://github.com/n8armstrong/CalendarView/issues/7
     func testSecondSundayInMarchBug() {
-        let marchFirst = moment("3-1-2016")!
-        let firstVisibleDay = marchFirst.startOf(.Months).endOf(.Days).subtract(marchFirst.weekday - 1, .Days).startOf(.Days)
-        XCTAssertEqual("February 28, 2016", firstVisibleDay.format("MMMM d, yyyy"))
-        let dayInQuestion = firstVisibleDay.add(14, .Days)
+        let marchFirst = moment(stringDate: "3-1-2016")!
+        let firstVisibleDay = marchFirst.startOf(.months).endOf(.days).subtract(marchFirst.weekday - 1, .days).startOf(.days)
+        XCTAssertEqual("February 28, 2016", firstVisibleDay.format(dateFormat: "MMMM d, yyyy"))
+        let dayInQuestion = firstVisibleDay.add(14, .days)
         XCTAssertEqual(13, dayInQuestion.day)
     }
 
