@@ -15,18 +15,20 @@ class ContentView: UIScrollView {
     let currentPage = 1
     var months: [MonthView] = []
     var selectedDate: Moment?
-    var paged = false
+    var paged = true
+
+    private let dayType: DayView.Type
     
-    required init?(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
+    init(dayType: DayView.Type = DayView.self) {
+        self.dayType = dayType
+        super.init(frame: .zero)
         setup()
     }
-    
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        setup()
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
-    
+
     func setup() {
         isPagingEnabled = true
         showsHorizontalScrollIndicator = false
@@ -42,7 +44,7 @@ class ContentView: UIScrollView {
         selectedDate = date
         var currentDate = date.subtract(1, .months)
         for _ in 1...numMonthsLoaded {
-            let month = MonthView(frame: CGRect.zero)
+            let month = MonthView(dayType: dayType)
             month.date = currentDate
             addSubview(month)
             months.append(month)

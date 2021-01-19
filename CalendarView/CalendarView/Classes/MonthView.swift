@@ -38,20 +38,22 @@ class MonthView: UIView {
     var numDays: Int = 30
     var startsOn: Int = 0
 
-    required init?(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
+    private let dayType: DayView.Type
+
+    init(dayType: DayView.Type = DayView.self) {
+        self.dayType = dayType
+        super.init(frame: .zero)
         setup()
     }
 
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        setup()
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
-
+    
     func setup() {
         weeks = []
         for _ in 1...maxNumWeeks {
-            let week = WeekView(frame: CGRect.zero)
+            let week = WeekView(dayType: dayType)
             addSubview(week)
             weeks.append(week)
         }

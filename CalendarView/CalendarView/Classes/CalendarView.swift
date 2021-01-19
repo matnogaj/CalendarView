@@ -12,6 +12,7 @@ import UIKit
 public protocol CalendarViewDelegate {
     func calendarDidSelectDate(date: Moment)
     func calendarDidPageToDate(date: Moment)
+    func calendarWillDisplay(day: DayView)
 }
 
 public class CalendarView: UIView {
@@ -71,7 +72,7 @@ public class CalendarView: UIView {
     }
     
     lazy var contentView: ContentView = {
-        let cv = ContentView(frame: CGRect.zero)
+        let cv = ContentView(dayType: self.dayType)
         cv.delegate = self
         self.addSubview(cv)
         return cv
@@ -79,25 +80,22 @@ public class CalendarView: UIView {
     public var delegate: CalendarViewDelegate? {
         didSet {
             delegate?.calendarDidPageToDate(date: contentView.currentMonth().date)
+            reloadContent()
         }
     }
-    public var selectedDayOnPaged: Int? = 1
-    
-    required public init?(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
+
+    private let dayType: DayView.Type
+
+    public init(dayType: DayView.Type = DayView.self) {
+        self.dayType = dayType
+        super.init(frame: .zero)
         setup()
     }
-    
-    override public init(frame: CGRect) {
-        super.init(frame: frame)
-        setup()
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
-    
-    public init() {
-        super.init(frame: CGRect.zero)
-        setup()
-    }
-    
+
     override public func willMove(toWindow newWindow: UIWindow?) {
         if newWindow == nil {
             NotificationCenter.default.removeObserver(self)
@@ -130,7 +128,32 @@ public class CalendarView: UIView {
     public func selectDate(date: Moment) {
         contentView.selectDate(date: date)
     }
-    
+
+    private func reloadContent() {
+        contentView.months
+            .flatMap { $0.weeks }
+            .flatMap { $0.days }
+            .forEach { [weak self] dayView in
+                self?.delegate?.calendarWillDisplay(day: dayView)
+        }
+    }
+
+    public func nextPage() {
+        guard contentView.paged else { return }
+        goTo(page: 2)
+    }
+
+    public func previousPage() {
+        guard contentView.paged else { return }
+        goTo(page: 0)
+    }
+
+    private func goTo(page: Int) {
+        var frame = contentView.frame
+        frame.origin.x = frame.size.width * page
+        frame.origin.y = 0
+        contentView.scrollRectToVisible(frame, animated: true)
+    }
 }
 
 extension CalendarView: UIScrollViewDelegate {
@@ -141,22 +164,18 @@ extension CalendarView: UIScrollViewDelegate {
         if ratio.isNaN { return }
         if ratio >= 2.0 || ratio <= 0.0 {
             contentView.selectPage(page: Int(ratio))
+        } else if ratio == 1.0 && !contentView.isDecelerating && !contentView.isDragging {
+            contentView.paged = true
         }
     }
     
     public func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         contentView.setContentOffset(CGPoint(x: contentView.frame.width, y: contentView.contentOffset.y), animated: true)
         delegate?.calendarDidPageToDate(date: contentView.currentMonth().date)
-        DispatchQueue.global(qos: .background).async {
-            if let day = self.selectedDayOnPaged {
-                let dayView = self.contentView.selectVisibleDate(date: day)
-                DispatchQueue.main.async() {
-                    if let view = dayView {
-                        view.selected = true
-                    }
-                }
-            }
-        }
+        reloadContent()
     }
-    
+
+    public func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
+        scrollViewDidEndDecelerating(contentView)
+    }
 }

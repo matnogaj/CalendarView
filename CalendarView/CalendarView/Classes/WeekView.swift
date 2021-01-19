@@ -17,22 +17,24 @@ class WeekView: UIView {
         }
     }
     var days: [DayView] = []
-    var month: Moment!
+    var month: Moment = moment()
 
-    required init?(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
+    private let dayType: DayView.Type
+
+    required init(dayType: DayView.Type = DayView.self) {
+        self.dayType = dayType
+        super.init(frame: .zero)
         setup()
     }
 
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        setup()
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 
     func setup() {
         days = []
         for _ in 1...7 {
-            let day = DayView()
+            let day = dayType.init()
             addSubview(day)
             days.append(day)
         }

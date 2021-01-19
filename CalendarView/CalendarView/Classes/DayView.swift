@@ -11,24 +11,24 @@ import UIKit
 
 let CalendarSelectedDayNotification = "CalendarSelectedDayNotification"
 
-class DayView: UIView {
+open class DayView: UIView {
     
-    var date: Moment = moment() {
+    public internal(set) var date: Moment = moment() {
         didSet {
             dateLabel.text = date.format(dateFormat: "d")
             setNeedsLayout()
         }
     }
-    lazy var dateLabel: UILabel = {
+    lazy public internal(set) var dateLabel: UILabel = {
         let label = UILabel()
         label.textAlignment = .center
         label.font = CalendarView.dayFont
         self.addSubview(label)
         return label
     }()
-    var isToday: Bool = false
-    var isOtherMonth: Bool = false
-    var selected: Bool = false {
+    public internal(set) var isToday: Bool = false
+    public internal(set) var isOtherMonth: Bool = false
+    public internal(set) var selected: Bool = false {
         didSet {
             if selected {
                 NotificationCenter.default
@@ -37,9 +37,12 @@ class DayView: UIView {
             updateView()
         }
     }
+
+    private let padding: CGFloat
     
-    init() {
-        super.init(frame: CGRect.zero)
+    required public init(padding: CGFloat = 10) {
+        self.padding = padding
+        super.init(frame: .zero)
         let tap = UITapGestureRecognizer(target: self, action: #selector(selectIt))
         addGestureRecognizer(tap)
         NotificationCenter.default.addObserver(self,
@@ -47,18 +50,14 @@ class DayView: UIView {
                                                name: NSNotification.Name(rawValue: CalendarSelectedDayNotification),
                                                object: nil)
     }
-    
-    required init?(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
+
+    required public init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
-    
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-    }
-    
-    override func layoutSubviews() {
+
+    override public func layoutSubviews() {
         super.layoutSubviews()
-        dateLabel.frame = bounds.insetBy(dx: 10, dy: 10) //(bounds, 10, 10)
+        dateLabel.frame = bounds.insetBy(dx: padding, dy: padding)
         updateView()
     }
     
@@ -71,7 +70,7 @@ class DayView: UIView {
         }
     }
     
-    func updateView() {
+    open func updateView() {
         if self.selected {
             dateLabel.textColor = CalendarView.daySelectedTextColor
             dateLabel.backgroundColor = CalendarView.daySelectedBackgroundColor
