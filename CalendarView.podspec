@@ -22,7 +22,7 @@ Pod::Spec.new do |s|
   s.screenshots     = "https://raw.githubusercontent.com/n8armstrong/CalendarView/master/screens/screenshot.png"
   s.license          = 'MIT'
   s.author           = { "Nate Armstrong" => "natearmstrong2@gmail.com" }
-  s.source           = { :git => "https://github.com/n8armstrong/CalendarView.git", :branch => master }
+  s.source           = { :git => "https://github.com/n8armstrong/CalendarView.git", :branch => 'master' }
   s.social_media_url = 'https://twitter.com/N8armstrong'
 
   s.platform     = :ios, '9.0'
