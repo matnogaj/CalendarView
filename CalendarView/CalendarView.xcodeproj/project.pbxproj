@@ -16,7 +16,6 @@
 		4FC5100120F76A7E00C35330 /* MonthView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FC50FFB20F76A7E00C35330 /* MonthView.swift */; };
 		4FC5100220F76A7E00C35330 /* WeekView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FC50FFC20F76A7E00C35330 /* WeekView.swift */; };
 		4FC5100320F76A7E00C35330 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FC50FFD20F76A7E00C35330 /* ContentView.swift */; };
-		5CDABD9125B4DEEC00E75AF9 /* SwiftMoment.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CDABD8B25B4DEEC00E75AF9 /* SwiftMoment.h */; };
 		5CDABD9225B4DEEC00E75AF9 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CDABD8C25B4DEEC00E75AF9 /* Extensions.swift */; };
 		5CDABD9325B4DEEC00E75AF9 /* Moment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CDABD8D25B4DEEC00E75AF9 /* Moment.swift */; };
 		5CDABD9425B4DEEC00E75AF9 /* Operators.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CDABD8E25B4DEEC00E75AF9 /* Operators.swift */; };
@@ -47,7 +46,6 @@
 		4FC50FFB20F76A7E00C35330 /* MonthView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MonthView.swift; sourceTree = "<group>"; };
 		4FC50FFC20F76A7E00C35330 /* WeekView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WeekView.swift; sourceTree = "<group>"; };
 		4FC50FFD20F76A7E00C35330 /* ContentView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
-		5CDABD8B25B4DEEC00E75AF9 /* SwiftMoment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SwiftMoment.h; sourceTree = "<group>"; };
 		5CDABD8C25B4DEEC00E75AF9 /* Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		5CDABD8D25B4DEEC00E75AF9 /* Moment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Moment.swift; sourceTree = "<group>"; };
 		5CDABD8E25B4DEEC00E75AF9 /* Operators.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Operators.swift; sourceTree = "<group>"; };
@@ -128,7 +126,6 @@
 		5CDABD8A25B4DEEC00E75AF9 /* SwiftMoment */ = {
 			isa = PBXGroup;
 			children = (
-				5CDABD8B25B4DEEC00E75AF9 /* SwiftMoment.h */,
 				5CDABD8C25B4DEEC00E75AF9 /* Extensions.swift */,
 				5CDABD8D25B4DEEC00E75AF9 /* Moment.swift */,
 				5CDABD8E25B4DEEC00E75AF9 /* Operators.swift */,
@@ -146,7 +143,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5CDABD9125B4DEEC00E75AF9 /* SwiftMoment.h in Headers */,
 				1D91F8C61BCC1F4C0040FF1B /* CalendarView.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
