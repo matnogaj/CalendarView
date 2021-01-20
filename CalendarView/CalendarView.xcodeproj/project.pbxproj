@@ -135,7 +135,8 @@
 				5CDABD8F25B4DEEC00E75AF9 /* TimeUnit.swift */,
 				5CDABD9025B4DEEC00E75AF9 /* Duration.swift */,
 			);
-			path = SwiftMoment;
+			name = SwiftMoment;
+			path = CalendarView/Classes/SwiftMoment;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
