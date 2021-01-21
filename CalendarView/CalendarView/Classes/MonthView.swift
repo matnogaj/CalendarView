@@ -61,27 +61,21 @@ class MonthView: UIView {
             addSubview(label)
         }
     }
-
-    func setdown() {
-        for week in weeks {
-            week.setdown()
-            week.removeFromSuperview()
-        }
-    }
-
+    
     override func layoutSubviews() {
         super.layoutSubviews()
         var x: CGFloat = 0
         let labelHeight: CGFloat = 18
         let inset: CGFloat = 10
         for label in weekLabels {
-            label.frame = CGRect(x: x, y: inset, width: bounds.size.width / 7, height: labelHeight)
+            label.frame = CGRect(x: x, y: inset, width: floor(bounds.size.width / 7), height: labelHeight)
             x = label.frame.maxX
         }
         var y: CGFloat = labelHeight + inset
         for i in 1...weeks.count {
             let week = weeks[i - 1]
-            week.frame = CGRect(x: 0, y: y, width: bounds.size.width, height: (bounds.size.height - (labelHeight + inset) - inset) / maxNumWeeks)
+            let height = (bounds.size.height - (labelHeight + inset) - inset) / maxNumWeeks
+            week.frame = CGRect(x: 0, y: y, width: bounds.size.width, height: floor(height))
             y = week.frame.maxY
         }
     }

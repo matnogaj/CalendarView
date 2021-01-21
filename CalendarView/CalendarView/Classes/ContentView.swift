@@ -14,7 +14,6 @@ class ContentView: UIScrollView {
     let numMonthsLoaded = 3
     let currentPage = 1
     var months: [MonthView] = []
-    var selectedDate: Moment?
     var paged = true
 
     private let dayType: DayView.Type
@@ -29,20 +28,17 @@ class ContentView: UIScrollView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    func setup() {
+    private func setup() {
         isPagingEnabled = true
         showsHorizontalScrollIndicator = false
         showsVerticalScrollIndicator = false
         
         for month in months {
-            month.setdown()
             month.removeFromSuperview()
         }
         
         months = []
-        let date = selectedDate ?? moment()
-        selectedDate = date
-        var currentDate = date.subtract(1, .months)
+        var currentDate = moment().subtract(1, .months)
         for _ in 1...numMonthsLoaded {
             let month = MonthView(dayType: dayType)
             month.date = currentDate
@@ -111,43 +107,11 @@ class ContentView: UIScrollView {
                 months = [page2, page3, page1]
             }
             contentOffset.x = frame.width
-            selectedDate = nil
             paged = true
         }
     }
-    
-    func selectDate(date: Moment) {
-        selectedDate = date
-        setup()
-        selectVisibleDate(date: date.day)
-        setNeedsLayout()
-    }
-    
-    @discardableResult func selectVisibleDate(date: Int) -> DayView? {
-        let month = currentMonth()
-        for week in month.weeks {
-            for day in week.days {
-                if day.date.month == month.date.month && day.date.day == date {
-                    day.selected = true
-                    return day
-                }
-            }
-        }
-        return nil
-    }
-    
-    func removeObservers() {
-        for month in months {
-            for week in month.weeks {
-                for day in week.days {
-                    NotificationCenter.default.removeObserver(day)
-                }
-            }
-        }
-    }
-    
+        
     func currentMonth() -> MonthView {
         return months[1]
     }
-    
 }

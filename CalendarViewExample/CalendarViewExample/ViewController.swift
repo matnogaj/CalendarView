@@ -4,21 +4,45 @@ import CalendarView
 class ViewController: UIViewController {
 
     private let calendarView: CalendarView = {
+        CalendarView.weekLabelTextColor = UIColor.blue
+        CalendarView.daySelectedTextColor = UIColor.white
+        CalendarView.daySelectedBackgroundColor = UIColor.blue
+
+        CalendarView.dayTextColor = UIColor.blue
+        CalendarView.todayTextColor = UIColor.blue
+
+        CalendarView.dayBackgroundColor = UIColor.white
+        CalendarView.todayBackgroundColor = UIColor.white
+
         let calendarView = CalendarView(dayType: MyDayView.self)
         calendarView.translatesAutoresizingMaskIntoConstraints = false
         return calendarView
     }()
-    private let previousButton: UIButton = {
+    private let previousMonthButton: UIButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setTitle("Previous", for: .normal)
+        button.setTitle("Previous Month", for: .normal)
         button.setTitleColor(UIColor.systemBlue, for: .normal)
         return button
     }()
-    private let nextButton: UIButton = {
+    private let nextMonthButton: UIButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setTitle("Next", for: .normal)
+        button.setTitle("Next Month", for: .normal)
+        button.setTitleColor(UIColor.systemBlue, for: .normal)
+        return button
+    }()
+    private let previousDayButton: UIButton = {
+        let button = UIButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setTitle("Previous Day", for: .normal)
+        button.setTitleColor(UIColor.systemBlue, for: .normal)
+        return button
+    }()
+    private let nextDayButton: UIButton = {
+        let button = UIButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setTitle("Next Day", for: .normal)
         button.setTitleColor(UIColor.systemBlue, for: .normal)
         return button
     }()
@@ -29,23 +53,34 @@ class ViewController: UIViewController {
         view.backgroundColor = UIColor.white
 
         calendarView.delegate = self
+        calendarView.selectDate(date: moment())
         setupView()
 
-        previousButton.addTarget(self, action: #selector(previousMonth), for: .touchUpInside)
-        nextButton.addTarget(self, action: #selector(nextMonth), for: .touchUpInside)
+        previousMonthButton.addTarget(self, action: #selector(previousMonth), for: .touchUpInside)
+        nextMonthButton.addTarget(self, action: #selector(nextMonth), for: .touchUpInside)
+        previousDayButton.addTarget(self, action: #selector(previousDay), for: .touchUpInside)
+        nextDayButton.addTarget(self, action: #selector(nextDay), for: .touchUpInside)
     }
 
     private func setupView() {
-        view.addSubview(previousButton)
-        view.addSubview(nextButton)
+        view.addSubview(previousMonthButton)
+        view.addSubview(nextMonthButton)
+        view.addSubview(previousDayButton)
+        view.addSubview(nextDayButton)
         view.addSubview(calendarView)
 
         NSLayoutConstraint.activate([
-            previousButton.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            previousButton.bottomAnchor.constraint(equalTo: calendarView.topAnchor),
+            previousDayButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            previousDayButton.bottomAnchor.constraint(equalTo: previousMonthButton.topAnchor, constant: -10),
 
-            nextButton.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            nextButton.bottomAnchor.constraint(equalTo: calendarView.topAnchor),
+            nextDayButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            nextDayButton.bottomAnchor.constraint(equalTo: nextMonthButton.topAnchor, constant: -10),
+
+            previousMonthButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            previousMonthButton.bottomAnchor.constraint(equalTo: calendarView.topAnchor),
+
+            nextMonthButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            nextMonthButton.bottomAnchor.constraint(equalTo: calendarView.topAnchor),
 
             calendarView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 100),
             calendarView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
@@ -55,21 +90,30 @@ class ViewController: UIViewController {
     }
 
     @objc private func nextMonth() {
-        calendarView.nextPage()
+        calendarView.goToNextMonth()
     }
 
     @objc private func previousMonth() {
-        calendarView.previousPage()
+        calendarView.goToPreviousMonth()
+    }
+
+    @objc private func nextDay() {
+        calendarView.selectNextDay()
+    }
+
+    @objc private func previousDay() {
+        calendarView.selectPreviousDay()
     }
 }
 
 extension ViewController: CalendarViewDelegate {
 
     func calendarDidSelectDate(date: Moment) {
+        print("Selected: \(date.description)")
     }
 
     func calendarDidPageToDate(date: Moment) {
-        print("\(date.description)")
+        print("Paged: \(date.description)")
     }
 
     func calendarWillDisplay(day: DayView) {
@@ -92,6 +136,11 @@ class MyDayView: DayView {
 
         self.dateLabel.layer.cornerRadius = 10
         self.dateLabel.layer.masksToBounds = true
+
+        self.dateLabel.layer.shadowColor = UIColor.clear.cgColor
+        self.dateLabel.layer.shadowOpacity = 0
+        self.dateLabel.layer.shadowRadius = 0
+        self.dateLabel.layer.borderWidth = 0
     }
 
     required init?(coder: NSCoder) {

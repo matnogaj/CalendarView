@@ -70,18 +70,22 @@ public class CalendarView: UIView {
         get { return Appearance.dayFont }
         set { Appearance.dayFont = newValue }
     }
+
+    public private(set) var selectedDate: Moment = moment()
     
-    lazy var contentView: ContentView = {
-        let cv = ContentView(dayType: self.dayType)
-        cv.delegate = self
-        self.addSubview(cv)
-        return cv
+    private lazy var contentView: ContentView = {
+        let contentView = ContentView(dayType: self.dayType)
+        contentView.translatesAutoresizingMaskIntoConstraints = false
+        return contentView
     }()
     public var delegate: CalendarViewDelegate? {
         didSet {
             delegate?.calendarDidPageToDate(date: contentView.currentMonth().date)
             reloadContent()
         }
+    }
+    private var allDays: [DayView] {
+        contentView.months.flatMap { $0.weeks }.flatMap { $0.days }
     }
 
     private let dayType: DayView.Type
@@ -95,55 +99,73 @@ public class CalendarView: UIView {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
-    override public func willMove(toWindow newWindow: UIWindow?) {
-        if newWindow == nil {
-            NotificationCenter.default.removeObserver(self)
-            contentView.removeObservers()
-        } else {
-            NotificationCenter.default.addObserver(self, selector: #selector(dateSelected(notification:)), name: NSNotification.Name(rawValue: CalendarSelectedDayNotification), object: nil)
-        }
-    }
     
-    func setup() {
-        if let date = contentView.selectedDate {
-            contentView.selectVisibleDate(date: date.day)
-            delegate?.calendarDidSelectDate(date: moment(moment: date))
-            contentView.selectedDate = nil
+    private func setup() {
+        allDays.forEach { [weak self] dayView in
+            let tap = UITapGestureRecognizer(target: self, action: #selector(onTapDayView(gesture:)))
+            dayView.addGestureRecognizer(tap)
         }
+
+        contentView.delegate = self
+        addSubview(contentView)
+        NSLayoutConstraint.activate([
+            contentView.topAnchor.constraint(equalTo: topAnchor),
+            contentView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            contentView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            contentView.bottomAnchor.constraint(equalTo: bottomAnchor)
+        ])
+
+        delegate?.calendarDidSelectDate(date: selectedDate)
     }
     
     override public func layoutSubviews() {
         super.layoutSubviews()
-        contentView.frame = bounds
+
         contentView.contentOffset.x = contentView.frame.width
     }
-    
-    @objc func dateSelected(notification: NSNotification) {
-        if let date = notification.object as? Date {
-            delegate?.calendarDidSelectDate(date: moment(date: date))
+
+    private func dayView(for date: Moment) -> DayView? {
+        return allDays.first {
+            $0.date.day == date.day && $0.date.month == date.month && $0.date.year == date.year && !$0.isOtherMonth
         }
     }
     
     public func selectDate(date: Moment) {
-        contentView.selectDate(date: date)
+        dayView(for: selectedDate)?.isSelected = false
+        selectedDate = date
+        dayView(for: selectedDate)?.isSelected = true
+        delegate?.calendarDidSelectDate(date: selectedDate)
     }
 
-    private func reloadContent() {
-        contentView.months
-            .flatMap { $0.weeks }
-            .flatMap { $0.days }
-            .forEach { [weak self] dayView in
-                self?.delegate?.calendarWillDisplay(day: dayView)
+    public func reloadContent() {
+        allDays.forEach { [weak self] dayView in
+            self?.delegate?.calendarWillDisplay(day: dayView)
         }
     }
 
-    public func nextPage() {
+    public func selectNextDay() {
+        let nextDay = selectedDate.add(1, .days)
+        let shouldChangeMonth = !selectedDate.isSameMonth(other: nextDay)
+        selectDate(date: nextDay)
+        guard shouldChangeMonth else { return }
+        goToNextMonth()
+    }
+
+    public func selectPreviousDay() {
+        let previousDay = selectedDate.subtract(1, .days)
+        let shouldChangeMonth = !selectedDate.isSameMonth(other: previousDay)
+        selectDate(date: previousDay)
+        guard shouldChangeMonth else { return }
+        goToPreviousMonth()
+
+    }
+
+    public func goToNextMonth() {
         guard contentView.paged else { return }
         goTo(page: 2)
     }
 
-    public func previousPage() {
+    public func goToPreviousMonth() {
         guard contentView.paged else { return }
         goTo(page: 0)
     }
@@ -153,6 +175,13 @@ public class CalendarView: UIView {
         frame.origin.x = frame.size.width * page
         frame.origin.y = 0
         contentView.scrollRectToVisible(frame, animated: true)
+    }
+
+    @objc private func onTapDayView(gesture: UITapGestureRecognizer) {
+        guard let dayView = gesture.view as? DayView,
+            !dayView.isOtherMonth else { return }
+
+        selectDate(date: dayView.date)
     }
 }
 
