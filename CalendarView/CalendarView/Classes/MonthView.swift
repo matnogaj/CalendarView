@@ -103,7 +103,7 @@ class WeekLabel: UILabel {
         text = day
         textAlignment = .center
         textColor = CalendarView.weekLabelTextColor
-        font = UIFont.boldSystemFont(ofSize: 10)
+        font = CalendarView.weekFont
     }
 
     required init?(coder aDecoder: NSCoder) {

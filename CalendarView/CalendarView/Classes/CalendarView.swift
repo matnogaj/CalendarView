@@ -28,6 +28,7 @@ public class CalendarView: UIView {
         static var otherMonthBackgroundColor = UIColor.clear
         static var weekLabelTextColor = UIColor.black
         static var dayFont = UIFont.systemFont(ofSize: 15)
+        static var weekFont = UIFont.systemFont(ofSize: 13)
     }
     
     public class var dayBackgroundColor: UIColor {
@@ -65,6 +66,10 @@ public class CalendarView: UIView {
     public class var weekLabelTextColor: UIColor {
         get { return Appearance.weekLabelTextColor }
         set { Appearance.weekLabelTextColor = newValue }
+    }
+    public class var weekFont: UIFont {
+        get { return Appearance.weekFont }
+        set { Appearance.weekFont = newValue }
     }
     public class var dayFont: UIFont {
         get { return Appearance.dayFont }
